@@ -1,0 +1,33 @@
+.home-page {
+    text-align: center;
+}
+
+.home-page__title {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.home-page__logged-in,
+.home-page__logged-out {
+    margin-bottom: 20px;
+}
+
+.home-page__logged-in-text,
+.home-page__logged-out-text {
+    font-size: 18px;
+}
+
+.home-page__matric-number {
+    font-weight: bold;
+}
+
+.home-page__banner {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.home-page__banner-image {
+    max-width: 100%;
+}
+
