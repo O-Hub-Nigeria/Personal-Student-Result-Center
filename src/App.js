@@ -1,4 +1,4 @@
-
+import { initializeApp } from 'firebase/app';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { doc, getDoc, setDoc, getDocs , query, where} from 'firebase/firestore';
 import 'bootstrap/dist/css/bootstrap.min.css';
