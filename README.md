@@ -1,7 +1,8 @@
-Personal Student Result Center
+# Personal Student Result Center
+
 This is a web application for managing and displaying student results. It provides a user-friendly interface for students to add and view their course details and grades.
 
-Getting Started
+## Getting Started
 To get started with the application, follow these steps:
 
 Clone this repository to your local machine.
@@ -61,4 +62,7 @@ Making a Progressive Web App
 This section has moved here: https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app
 
 Advanced Configuration
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app
+This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/deployment
+
+npm run build fails to minify
+This section has moved here: https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify
