@@ -4,13 +4,14 @@ import './App.css';
 
 
 
-const SignupPage = ({ handleLogin, setLoginStatus }) => {
+const SignupPage = ({ handleSignup,  setStudent }) => {
     const [matricNumber, setMatricNumber] = useState('');
     const [password, setPassword] = useState('');
+    const [loginStatus,setLoginStatus] = useState('');
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        handleLogin(matricNumber, password, setLoginStatus, true);
+        handleSignup(matricNumber, password, setLoginStatus, setStudent);
     };
 
     return (
@@ -35,8 +36,14 @@ const SignupPage = ({ handleLogin, setLoginStatus }) => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                </div>
-                    <button type="submit" className="btn btn-primary text-center">Sign Up</button>
+                    </div>
+                    <div className="form-group">
+                        {loginStatus && <p>{loginStatus}</p>}
+                    </div>
+                    <div className="button-container text-center" >
+                        <button type="submit" className="btn btn-primary text-center">Sign Up</button>
+                    </div>
+                
             </form>
             </div>
             </div>

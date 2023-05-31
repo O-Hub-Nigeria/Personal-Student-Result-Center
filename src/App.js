@@ -74,7 +74,7 @@ function App() {
         }
     };
     const navigate = useNavigate();
-    const handleSignUp = async (matricNumber, password, setLoginStatus) => {
+    const handleSignup = async (matricNumber, password, setLoginStatus, setStudent) => {
         try {
             // Get the Firestore instance
             const firestore = getFirestore();
@@ -105,9 +105,11 @@ function App() {
 
                 // Clear the matricNumber and password after creating the document
                 setStudent({ matricNumber: '', password: '', courses: [] });
+               
+                navigate('/login');
             }
         } catch (error) {
-            console.error('Error creating/fetching student document:', error);
+            setLoginStatus('Error creating/fetching student document:', error);
         }
     };
     const handleLogin = async (matricNumber, password, setLoginStatus) => {
@@ -130,7 +132,7 @@ function App() {
                     // A document with the matric number exists, check if the password matches
                     const existingStudent = docSnapshot.data();
                     if (existingStudent.password === password) {
-                        console.log('User authenticated');
+                        setLoginStatus('User authenticated');
 
                         // Get the courses associated with the matric number
                         const coursesQuerySnapshot = await getDocs(
@@ -159,7 +161,7 @@ function App() {
                 }
             
         } catch (error) {
-            console.error('Error creating/fetching student document:', error);
+            setLoginStatus('Error creating/fetching student document:', error);
         }
     };
 
@@ -199,7 +201,7 @@ function App() {
                 ) : (
                     <>
                         <Route path="/login" element={<LoginPage handleLogin={handleLogin} />} />
-                        <Route path="/signup" element={<SignupPage handleSignUp={handleSignUp} />} />
+                         <Route path="/signup" element={<SignupPage handleSignup={handleSignup} setStudent={setStudent} />} />
                     </>
                 )}
             </Routes>
