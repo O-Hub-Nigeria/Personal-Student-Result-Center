@@ -8,6 +8,7 @@ import './App.css';
 import ResultPage from './ResultPage';
 import CourseOfferedPage from './CourseOfferedPage';
 import LoginPage from './LoginPage';
+import SignupPage from './SignupPage';
 import HomePage from './HomePage';
 
 
@@ -73,7 +74,42 @@ function App() {
         }
     };
     const navigate = useNavigate();
+    const handleSignUp = async (matricNumber, password, setLoginStatus) => {
+        try {
+            // Get the Firestore instance
+            const firestore = getFirestore();
 
+            // Define the collection references
+            const studentsCollectionRef = collection(firestore, 'students');
+           
+
+            // Get the document reference for the provided matric number
+            const docRef = doc(studentsCollectionRef, matricNumber);
+
+            // Check if the document exists
+            const docSnapshot = await getDoc(docRef);
+
+            if (docSnapshot.exists()) {
+                setLoginStatus('Account with this matric number already exists');
+            } else {
+                // No document found, create a new document for the student
+                const newStudent = {
+                    matricNumber: matricNumber,
+                    password: password,
+                    courses: [],
+                };
+
+                // Create a new document with the student's details
+                await setDoc(docRef, newStudent);
+                setLoginStatus('Account created successfully');
+
+                // Clear the matricNumber and password after creating the document
+                setStudent({ matricNumber: '', password: '', courses: [] });
+            }
+        } catch (error) {
+            console.error('Error creating/fetching student document:', error);
+        }
+    };
     const handleLogin = async (matricNumber, password, setLoginStatus) => {
         try {
             // Get the Firestore instance
@@ -88,54 +124,40 @@ function App() {
 
             // Check if the document exists
             const docSnapshot = await getDoc(docRef);
+            
+                // Login functionality
+                if (docSnapshot.exists()) {
+                    // A document with the matric number exists, check if the password matches
+                    const existingStudent = docSnapshot.data();
+                    if (existingStudent.password === password) {
+                        console.log('User authenticated');
 
-            if (docSnapshot.exists()) {
-                // A document with the matric number exists, check if the password matches
-                const existingStudent = docSnapshot.data();
-                if (existingStudent.password === password) {
-                    console.log('User authenticated');
+                        // Get the courses associated with the matric number
+                        const coursesQuerySnapshot = await getDocs(
+                            query(
+                                coursesCollectionRef,
+                                where('matricNumber', '==', matricNumber)
+                            )
+                        );
+                        const courses = [];
 
-                    // Get the courses associated with the matric number
-                    const coursesQuerySnapshot = await getDocs(
-                        query(
-                            coursesCollectionRef,
-                            where('matricNumber', '==', matricNumber)
-                        )
-                    );
-                    const courses = [];
+                        // Iterate over the courses and add them to the courses array
+                        coursesQuerySnapshot.forEach((doc) => {
+                            courses.push(doc.data());
+                        });
 
-                    // Iterate over the courses and add them to the courses array
-                    coursesQuerySnapshot.forEach((doc) => {
-                        courses.push(doc.data());
-                    });
+                        // Set the student object with the existing data and courses
+                        setStudent({ ...existingStudent, courses });
 
-                    // Set the student object with the existing data and courses
-                    setStudent({ ...existingStudent, courses });
-
-                    // Redirect to Course Offered page
-                    navigate('/course-offered');
+                        // Redirect to Course Offered page
+                        navigate('/course-offered');
+                    } else {
+                        setLoginStatus('Incorrect password');
+                    }
                 } else {
-                    setLoginStatus('Incorrect password');
+                    setLoginStatus('Matric number does not exist');
                 }
-
-            } else {
-                // No document found, create a new document for the student
-                const newStudent = {
-                    matricNumber: matricNumber,
-                    password: password,
-                    courses: [],
-                };
-
-                // Create a new document with the student's details
-                await setDoc(docRef, newStudent);
-                setLoginStatus('Student document created successfully');
-
-                // Clear the matricNumber and password after creating the document
-                setStudent({ matricNumber: '', password: '', courses: [] });
-
-                // Redirect to Course Offered page
-                navigate('/course-offered');
-            }
+            
         } catch (error) {
             console.error('Error creating/fetching student document:', error);
         }
@@ -158,21 +180,30 @@ function App() {
             <Routes>
                 <Route path="/" element={<HomePage student={student} setStudent={setStudent} />} />
                 {student.matricNumber ? (
-                    <Route
-                        path="/course-offered"
-                        element={
-                            <CourseOfferedPage
-                                addCourse={addCourse}
-                                courses={student.courses}
-                                matricNumber={student.matricNumber}
-                            />
-                        }
-                    />
+                    <>
+                        <Route
+                            path="/course-offered"
+                            element={
+                                <CourseOfferedPage
+                                    addCourse={addCourse}
+                                    courses={student.courses}
+                                    matricNumber={student.matricNumber}
+                                />
+                            }
+                        />
+                        <Route
+                            path="/results"
+                            element={<ResultPage courses={student.courses} calculateCGPA={calculateCGPA} />}
+                        />
+                    </>
                 ) : (
-                    <Route path="/login" element={<LoginPage handleLogin={handleLogin} />} />
+                    <>
+                        <Route path="/login" element={<LoginPage handleLogin={handleLogin} />} />
+                        <Route path="/signup" element={<SignupPage handleSignUp={handleSignUp} />} />
+                    </>
                 )}
-                <Route path="/results" element={<ResultPage courses={student.courses} calculateCGPA={calculateCGPA} />} />
             </Routes>
+
         </div>
     );
 

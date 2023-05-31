@@ -1,5 +1,6 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import './App.css';
 
 
@@ -30,7 +31,15 @@ function LoginPage({ handleLogin }) {
                     <div className="button-container text-center">
                         <button type="submit" className="btn btn-primary">Submit</button>
                     </div>
-                    <div className="form-group">{loginStatus && <p>{loginStatus}</p>}</div>
+                    <div className="form-group">
+                        {loginStatus && <p>{loginStatus}</p>}
+                        <p>
+                            New user?{' '}
+                            <Link to="/signup">
+                                Sign Up
+                            </Link>
+                        </p>
+                    </div>
                     </form>
                 </div>
             </div>
