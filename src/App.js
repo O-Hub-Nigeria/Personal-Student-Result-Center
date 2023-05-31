@@ -37,6 +37,7 @@ function App() {
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
+    // eslint-disable-next-line no-unused-vars
     const analytics = getAnalytics(app);
 
 
@@ -79,7 +80,7 @@ function App() {
     const handleLogin = async (matricNumber, password, setLoginStatus) => {
         try {
             // Get the Firestore instance
-            const firestore = getFirestore();
+            const firestore = getFirestore(app);
 
             // Define the collection references
             const studentsCollectionRef = collection(firestore, 'students');

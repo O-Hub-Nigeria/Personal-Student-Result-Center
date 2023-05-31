@@ -1,13 +1,46 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
-import React, { useState } from 'react';
+import React, { useState,useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import { Link } from 'react-router-dom';
+import { getFirestore, collection } from 'firebase/firestore';
+import {  getDocs } from 'firebase/firestore';
+
 import './App.css';
 
 function CourseOfferedPage({ addCourse, courses, matricNumber }) {
     const [courseCode, setCourseCode] = useState("");
     const [creditUnit, setCreditUnit] = useState("");
     const [grade, setGrade] = useState("");
+    const [courseList, setCourseList] = useState([]);
+   
+    // Fetch the course codes and credit units from Firestore on component mount
+    useEffect(() => {
+        const fetchCourseList = async () => {
+            try {
+                // Get the Firestore instance
+                const firestore = getFirestore();
+
+                // Get the collection reference for the course list
+                const courseListCollectionRef = collection(firestore, 'courselist');
+
+                // Fetch the documents in the course list collection
+                const querySnapshot = await getDocs(courseListCollectionRef);
+
+                // Map the documents to an array of course objects
+                const fetchedCourseList = querySnapshot.docs.map((doc) => {
+                    return { courseCode: doc.id, creditUnit: doc.data().creditUnit };
+                });
+
+                // Set the course list in the state
+                setCourseList(fetchedCourseList);
+            } catch (error) {
+                console.error('Error fetching course list:', error);
+            }
+        };
+
+        fetchCourseList();
+    }, []);
+
 
     const handleAddCourse = () => {
         if (courseCode && creditUnit && grade) {
@@ -56,12 +89,28 @@ function CourseOfferedPage({ addCourse, courses, matricNumber }) {
                 <div className="col-md-6">
                     <div className="form-group">
                         <label>Course Code:</label>
-                        <input
-                            type="text"
+                        <select
                             className="form-control"
                             value={courseCode}
-                            onChange={(e) => setCourseCode(e.target.value)}
-                        />
+                            onChange={(e) => {
+                                setCourseCode(e.target.value);
+                                const selectedCourse = courseList.find(
+                                    (course) => course.courseCode === e.target.value
+                                );
+                                if (selectedCourse) {
+                                    setCreditUnit(selectedCourse.creditUnit);
+                                } else {
+                                    setCreditUnit("");
+                                }
+                            }}
+                        >
+                            <option value="">Select Course</option>
+                            {courseList.map((course) => (
+                                <option key={course.courseCode} value={course.courseCode}>
+                                    {course.courseCode}
+                                </option>
+                            ))}
+                        </select>
                     </div>
                     <div className="form-group">
                         <label>Credit Unit:</label>
@@ -122,7 +171,7 @@ function CourseOfferedPage({ addCourse, courses, matricNumber }) {
             )}
 
             {courses && courses.length > 0 && (
-                <div className="text-center">
+                <div className="button-container text-center">
                     <Link to="/results" className="btn btn-primary">
                         Show Results (CGPA)
                     </Link>
