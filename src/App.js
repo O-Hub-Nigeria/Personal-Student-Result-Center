@@ -1,5 +1,4 @@
 import { initializeApp } from 'firebase/app';
-import { getAnalytics } from 'firebase/analytics';
 import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { doc, getDoc, setDoc, getDocs , query, where} from 'firebase/firestore';
 import 'bootstrap/dist/css/bootstrap.min.css';
@@ -26,7 +25,7 @@ function App() {
     // Your web app's Firebase configuration
     // For Firebase JS SDK v7.20.0 and later, measurementId is optional
     const firebaseConfig = {
-        apiKey: "AIzaSyCd_IpQTRmDUsK2yFyrztsc8J9JA6Cf0hY",
+       apiKey: "AIzaSyCd_IpQTRmDUsK2yFyrztsc8J9JA6Cf0hY",
         authDomain: "student-result-app.firebaseapp.com",
         projectId: "student-result-app",
         storageBucket: "student-result-app.appspot.com",
@@ -37,15 +36,13 @@ function App() {
 
     // Initialize Firebase
     const app = initializeApp(firebaseConfig);
-    // eslint-disable-next-line no-unused-vars
-    const analytics = getAnalytics(app);
 
-
+  
    
     const addCourse = async (course, matricNumber) => {
         try {
             // Get the Firestore instance
-            const firestore = getFirestore();
+            const firestore = getFirestore(app);
 
             // Define the collection reference
             const coursesCollectionRef = collection(firestore, 'courses');
