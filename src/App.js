@@ -83,8 +83,12 @@ function App() {
             const studentsCollectionRef = collection(firestore, 'students');
            
 
-            // Get the document reference for the provided matric number
-            const docRef = doc(studentsCollectionRef, matricNumber);
+            // Remove slashes from the matricNumber value
+            const sanitizedMatricNumber = matricNumber.replace(/\//g, '');
+
+            // Get the document reference for the sanitized matric number
+            const docRef = doc(studentsCollectionRef, sanitizedMatricNumber);
+
 
             // Check if the document exists
             const docSnapshot = await getDoc(docRef);
@@ -109,7 +113,7 @@ function App() {
                 navigate('/login');
             }
         } catch (error) {
-            setLoginStatus('Error creating/fetching student document:', error);
+            setLoginStatus('Error creating/fetching student document: Invalid Matric Number Format', error);
         }
     };
     const handleLogin = async (matricNumber, password, setLoginStatus) => {
@@ -121,8 +125,11 @@ function App() {
             const studentsCollectionRef = collection(firestore, 'students');
             const coursesCollectionRef = collection(firestore, 'courses');
 
-            // Get the document reference for the provided matric number
-            const docRef = doc(studentsCollectionRef, matricNumber);
+            // Remove slashes from the matricNumber value
+            const sanitizedMatricNumber = matricNumber.replace(/\//g, '');
+
+            // Get the document reference for the sanitized matric number
+            const docRef = doc(studentsCollectionRef, sanitizedMatricNumber);
 
             // Check if the document exists
             const docSnapshot = await getDoc(docRef);

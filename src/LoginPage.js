@@ -29,7 +29,7 @@ function LoginPage({ handleLogin }) {
                     <input className="form-control input-field" type="password" value={password} onChange={(e) => setPassword(e.target.value)} />
                 </div>
                     <div className="button-container text-center">
-                        <button type="submit" className="btn btn-primary">Submit</button>
+                        <button type="submit" className="btn btn-primary">Login</button>
                     </div>
                     <div className="form-group">
                         {loginStatus && <p>{loginStatus}</p>}
